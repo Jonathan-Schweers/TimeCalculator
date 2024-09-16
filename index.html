@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 150px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Time Difference Calculator</h1>
+        start
+        <input type="time" id="time1" step="1" placeholder="Start Time">
+        end
+        <input type="time" id="time2" step="1" placeholder="End Time">
+        break
+        <input type="time" id="time3" step="1" placeholder="Subtract Time">
+        <button onclick="calculateDifference()">Calculate Difference</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateDifference() {
+            const time1 = document.getElementById('time1').value;
+            const time2 = document.getElementById('time2').value;
+            const time3 = document.getElementById('time3').value;
+
+            if (!time1 || !time2 || !time3) {
+                alert('Please enter all times.');
+                return;
+            }
+
+            // Split the times and convert to hours and minutes
+            const [hours1, minutes1] = time1.split(':').map(Number);
+            const [hours2, minutes2] = time2.split(':').map(Number);
+            const [hours3, minutes3] = time3.split(':').map(Number);
+
+            // Create Date objects for each time
+            const date1 = new Date();
+            const date2 = new Date();
+            const date3 = new Date();
+            date1.setHours(hours1, minutes1, 0);
+            date2.setHours(hours2, minutes2, 0);
+            date3.setHours(hours3, minutes3, 0);
+
+            // Calculate the difference between time1 and time2
+            const diffMs1 = date2 - date1;
+            const diffHours1 = Math.floor(diffMs1 / (1000 * 60 * 60));
+            const diffMinutes1 = Math.floor((diffMs1 % (1000 * 60 * 60)) / (1000 * 60));
+
+            // Convert the difference into minutes to subtract from the third time
+            const totalMinutes1 = diffHours1 * 60 + diffMinutes1;
+
+            // Calculate time3 in minutes
+            const totalMinutes3 = hours3 * 60 + minutes3;
+
+            // Subtract time3 from the difference between time1 and time2
+            const finalMinutes = Math.abs(totalMinutes1 - totalMinutes3);
+
+            // Convert the final result back to hours and minutes
+            const finalHours = Math.floor(finalMinutes / 60);
+            const finalMinutesRemaining = finalMinutes % 60;
+
+            // Display the result
+            document.getElementById('result').innerText = 
+                `Final Difference: ${finalHours} hours and ${finalMinutesRemaining} minutes`;
+        }
+    </script>
+</body>
+</html>
