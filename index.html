@@ -4,60 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Calculator</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Asap&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f4f4f4;
+            font-family: 'Asap', sans-serif;
+            color: white;
+            background-color: rgb(12, 15, 29);
         }
         .container {
-            background: #fff;
+            z-index: 12;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            background-color: hsla(232, 22%, 11%, 0.9);
+            box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12);
             text-align: center;
+        }
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 22px;
         }
         input {
             padding: 10px;
-            font-size: 16px;
-            margin: 10px;
-            border: 1px solid #ddd;
+            font-size: 22px;
+            margin-top: 5px;
+            color: #000000;
+            filter: invert(100%);
+            border: 2px solid #7a93b3;
+            background-color: #e4e2d5;
+            box-shadow: 0px 3px 3px -2px rgba(255, 255, 255, 0.2), 0px 3px 4px 0px rgba(255, 255, 255, 0.14), 0px 1px 8px 0px rgba(255, 255, 255, 0.12);
             border-radius: 4px;
-            width: 150px;
+            width: 120px;
+            height: 36px;
+        }
+        input:hover {
+            border: 2px solid #000000;
         }
         button {
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 22px;
+            height: 60px;
+            width: 144px;
+            margin-top: 20px;
             border: none;
-            background-color: #007bff;
-            color: #fff;
+            background-color: rgba(27, 29, 42, 0.9);
+            box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12);
+            color: rgb(133, 108, 76);
             border-radius: 4px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #0056b3;
+            color: white;
         }
         .result {
+            font-family: monospace;
+            font-size: 22px;
+            padding: 10px;
+            color: #000000;
+            filter: invert(100%);
+            border: 2px solid #7a93b3;
+            background-color: #e4e2d5;
+            box-shadow: 0px 3px 3px -2px rgba(255, 255, 255, 0.2), 0px 3px 4px 0px rgba(255, 255, 255, 0.14), 0px 1px 8px 0px rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+            width: 120px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-top: 20px;
-            font-size: 18px;
+        }
+        /* Center both button and result */
+        .center {
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
-<body>
+<body onload="calculateDifference()">
     <div class="container">
-        <h1>Time Difference Calculator</h1>
-        start
-        <input type="time" id="time1" step="1" placeholder="Start Time">
-        end
-        <input type="time" id="time2" step="1" placeholder="End Time">
-        break
-        <input type="time" id="time3" step="1" placeholder="Subtract Time">
-        <button onclick="calculateDifference()">Calculate Difference</button>
-        <div class="result" id="result"></div>
+        <h1>Start to End with Break</h1>
+
+        <div class="input-row">
+            <div class="input-group">
+                <label for="time1">Start</label>
+                <input type="time" id="time1" value="07:00" placeholder="Start Time">
+            </div>
+
+            <div class="input-group">
+                <label for="time2">End</label>
+                <input type="time" id="time2" value="16:00" placeholder="End Time">
+            </div>
+
+            <div class="input-group">
+                <label for="time3">Break</label>
+                <input type="time" id="time3" value="00:30" placeholder="Subtract Time">
+            </div>
+        </div>
+
+        <!-- Center the button -->
+        <div class="center">
+            <button onclick="calculateDifference()">Calculate</button>
+        </div>
+
+        <!-- Center the result box -->
+        <div class="center">
+            <div class="result" id="result"></div>
+        </div>
     </div>
 
     <script>
@@ -71,7 +136,7 @@
                 return;
             }
 
-            // Split the times and convert to hours and minutes
+            // Split the times and convert to hours and minutes (without seconds)
             const [hours1, minutes1] = time1.split(':').map(Number);
             const [hours2, minutes2] = time2.split(':').map(Number);
             const [hours3, minutes3] = time3.split(':').map(Number);
@@ -79,32 +144,34 @@
             // Create Date objects for each time
             const date1 = new Date();
             const date2 = new Date();
-            const date3 = new Date();
             date1.setHours(hours1, minutes1, 0);
             date2.setHours(hours2, minutes2, 0);
-            date3.setHours(hours3, minutes3, 0);
 
             // Calculate the difference between time1 and time2
             const diffMs1 = date2 - date1;
             const diffHours1 = Math.floor(diffMs1 / (1000 * 60 * 60));
             const diffMinutes1 = Math.floor((diffMs1 % (1000 * 60 * 60)) / (1000 * 60));
 
-            // Convert the difference into minutes to subtract from the third time
+            // Convert the difference into total minutes to subtract the break time
             const totalMinutes1 = diffHours1 * 60 + diffMinutes1;
 
-            // Calculate time3 in minutes
+            // Calculate break time in minutes
             const totalMinutes3 = hours3 * 60 + minutes3;
 
-            // Subtract time3 from the difference between time1 and time2
-            const finalMinutes = Math.abs(totalMinutes1 - totalMinutes3);
+            // Subtract the break time from the total time difference
+            const finalMinutes = totalMinutes1 - totalMinutes3;
 
-            // Convert the final result back to hours and minutes
-            const finalHours = Math.floor(finalMinutes / 60);
-            const finalMinutesRemaining = finalMinutes % 60;
+            if (finalMinutes < 0) {
+                document.getElementById('result').innerText = "Invalid time";
+                return;
+            }
 
-            // Display the result
-            document.getElementById('result').innerText = 
-                `Final Difference: ${finalHours} hours and ${finalMinutesRemaining} minutes`;
+            // Convert the final result back to hours and minutes in the 24:00 format
+            const finalHours = String(Math.floor(finalMinutes / 60)).padStart(2, '0');
+            const finalMinutesRemaining = String(finalMinutes % 60).padStart(2, '0');
+
+            // Display the result in 24:00 format
+            document.getElementById('result').innerText = `${finalHours}:${finalMinutesRemaining}`;
         }
     </script>
 </body>
